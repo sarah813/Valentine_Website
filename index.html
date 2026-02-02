@@ -28,22 +28,37 @@
     <!-- Letter Screen -->
     <div id="letter-container"> <!-- Full page -->
 
-      <div class="letter-window"> <!-- Window graphic -->
-        <h1 id="letter-title">Will you be my Valentine?</h1>
+        <div class="letter-window"> <!-- Window graphic -->
+            <!-- Content Box -->
+            <div class="letter-content">
+                <h1 id="letter-title">Will you be my Valentine?</h1>
 
-        <div class="buttons" id="letter-buttons">
-          <img src="images/yes.png" class="btn yes-btn" alt="Yes" />
+                <div class="buttons" id="letter-buttons">
+                    <img src="images/yes.png" class="btn yes-btn" alt="Yes" />
 
-          <div class="no-wrapper">
-            <img src="images/no.png" class="btn no-btn" alt="No" />
-          </div>
+                    <div class="no-wrapper">
+                        <img src="images/no.png" class="btn no-btn" alt="No" />
+                    </div>
+                </div>
+                
+                <!-- Dino game, hidden until clicking Yes -->
+                <div id="game-container" style="display: none">
+                    <canvas id="dino-canvas" width="700" height="220"></canvas>
+                    <p class="game-hint">Press Space to jump, or tap on the game</p>
+                </div>
+
+                <div id="win-container" style="display: none">
+                    <img src="images/cat_dance.gif" alt="" class="win-cat" />
+                    <p class="win-text"></p>
+                </div>
+
+                <p id="final-text" class="final-text" style="display: none">
+                    <strong>Valentine Date:</strong> Meow Restaurant at 7pm. Dress fancy!
+                </p>
+            </div>
         </div>
-
-        <p id="final-text" class="final-text" style="display: none">
-          <strong>Valentine Date:</strong> Meow Restaurant at 7pm. Dress fancy!
-        </p>
-      </div>
     </div>
+    <script src="dino.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
