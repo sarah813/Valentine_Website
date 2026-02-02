@@ -6,6 +6,24 @@
     font-display: swap;
 }
 
+/* ===== Letter sizing: tweak once, applies everywhere ===== */
+:root {
+  --letter-width: min(90vw, 800px);                  /* overall letter width */
+  --letter-height: calc(var(--letter-width) * 2 / 3);/* matches 3/2 aspect */
+  --letter-padding: 20px;                            /* window side padding */
+  --letter-top: clamp(30px, calc(var(--letter-height) * 0.5), 350px); /* content offset */
+
+  --content-width: clamp(260px, calc(var(--letter-width) * 0.85), 650px);
+  --content-max-height: clamp(200px, calc(var(--letter-height) * 0.65), 420px);
+  --content-padding: 12px 16px 10px;
+  --content-gap: 12px;
+  --content-font: clamp(14px, 1.6vw, 20px);          /* base text size */
+  --game-height: clamp(120px, calc(var(--content-max-height) * 0.55), 220px); /* keep hint visible */
+  --btn-width: clamp(120px, calc(var(--content-width) * 0.32), 200px);       /* yes/no buttons */
+  --btn-gap: clamp(24px, calc(var(--content-width) * 0.12), 80px);           /* space between buttons */
+  --cat-width: clamp(120px, calc(var(--content-width) * 0.32), 200px);        /* win/lose cat */
+}
+
 /* Center the whole page content reliably */
 body {
   margin: 0;
@@ -137,10 +155,9 @@ p {
 }
 
 .letter-window{
-    width: 90vw;
-    max-width: 800px;
+    width: var(--letter-width);
     aspect-ratio: 3/2;
-    padding: 20px 20px 0 20px;
+    padding: var(--letter-padding) var(--letter-padding) 0 var(--letter-padding);
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -152,7 +169,8 @@ p {
     background-position: center;
     border-radius: 12px;
     gap: 1px;
-    padding-top: 280px;
+    /*padding-top: 280px;*/
+    padding-top: var(--letter-top); /* consistent with letter size */
     transform: scale(1.2);
     opacity: 0;
     transition: transform 0.6s ease, opacity 0.6s ease;
@@ -160,25 +178,37 @@ p {
     overflow: hidden;
 }
 
-.letter-content {
+  .letter-content {
+    width: var(--content-width);
+    padding: var(--content-padding);
+    box-sizing: border-box;
+    transform: translateX(clamp(-30px, -1.5vw, 0px));
+    max-height: var(--content-max-height);
+    overflow: hidden;                      /* keeps content inside the window */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*border: 2px solid #95143d;  change letter border here! */
+    gap: var(--content-gap);
+    font-size: var(--content-font);          /* all inner text scales from here */
+  }
 
-  width: min(630px, 80vw);     /* safe readable width */
-  max-height: 330px;
-  margin-right: 22px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /*border: 2px solid #95143d;*/
-  gap: 12px;
-}
+#dino-canvas {
+    width: min(calc(var(--content-width) - 20px), 78vw); /* follow content width */
+    height: var(--game-height);         /* scales with content box */
+    display: block;
+    margin: 0 auto;                     /* keep centered when wider */
+    border-radius: 12px;
+    background: rgba(225, 239, 251, 0.55);
+  }
 
 /* Title that always fits and wraps */
 #letter-title {
   margin: 0;
   text-align: center;
 
-  /* Responsive font size */
-  font-size: clamp(18px, 4.2vw, 30px);
+  /* Tied to .letter-content font-size */
+  font-size: 1.5em;
 
   /* Allow wrapping nicely */
   line-height: 1.15;
@@ -195,7 +225,7 @@ p {
     display: flex;
     justify-content: center;
     margin-top: 60px;
-    gap: 80px;
+    gap: var(--btn-gap);
     position: relative;
 }
 
@@ -204,16 +234,16 @@ p {
 }
 
 .btn {
-    width: 120px;
+    width: var(--btn-width);
     cursor: pointer;
     user-select: none;
 }
 
 .yes-btn,
 .no-btn {
-width: 180px;
-height: auto;
-display: inline-block;
+ width: var(--btn-width);
+ height: auto;
+ display: inline-block;
 }
 
 .yes-btn {
@@ -249,31 +279,38 @@ display: inline-block;
 /* Game area styling */
 #game-container {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;         /* space between canvas and hint */
+  margin-top: 8px;   /* space above the game area */
 }
 
-#dino-canvas {
-  width: min(600px, 85vw);
-  height: auto;
-  display: block;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.55);
-}
 
-.game-hint {
-  margin: 0;
-  padding-top: 20px;
-  font-size: clamp(12px, 3.4vw, 16px);
+#game-hint {
+  margin: 15px 0 0;                  /* tighter so it fits */
+  width: 100%;
+  font-family: "RusticRoadway", sans-serif;
+  font-size: 1.4em;
+  line-height: 1.2;
+  color: #95143d;
   text-align: center;
 }
 
+
 .win-cat {
-  width: min(180px, 40vw);
+  width: var(--cat-width);
   height: auto;
   display: block;
 }
 
+.loose-cat{
+  width: var(--cat-width);
+  display: center;
+}
+
 .final-text{
-    font-size: 22px;
+    font-size: 1em;
     line-height: 1.4;
     text-align: center;
     display: inline-block;
@@ -281,3 +318,5 @@ display: inline-block;
     background-color: rgba(255,240,240,0.5);
     border-radius: 12px;
 }
+
+

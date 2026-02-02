@@ -5,7 +5,7 @@ function startDinoGame(canvasId, options = {}) {
     // Basic game settings
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
-    const groundY = canvas.height - 30;
+    let groundY = canvas.height - 30;
     const targetScore = options.targetScore ?? 200;
     const onWin = options.onWin ?? (() => {});
     const onLose = options.onLose ?? (() => {});
@@ -17,7 +17,40 @@ function startDinoGame(canvasId, options = {}) {
     let runFrame = 0;            // 0 or 1
     let runTime = 0;             // accumulates milliseconds
     const runFrameMs = 120;      // how fast the legs appear to move
+    let dino = null;
 
+    function resizeCanvas() {
+    const maxW = 700;
+    const minW = 300;
+
+    const w = Math.max(minW, Math.min(maxW, window.innerWidth * 0.8));
+    const h = w * 0.35;
+
+    canvas.width = Math.floor(w);
+    canvas.height = Math.floor(h);
+    groundY = canvas.height - 20;
+
+    // If the player exists, snap it to the ground after resize
+    if (dino) {
+        dino.y = groundY - dino.h;
+        dino.vy = 0;
+        dino.onGround = true;
+    }
+    }
+
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    const width = 35;
+
+    dino = {
+    x: 60,
+    y: groundY - 40,
+    w: width,
+    h: width * 0.645,
+    vy: 0,
+    onGround: true,
+    };
 
     // Cat sprite image setup
     const catRunImg = new Image();
@@ -35,22 +68,33 @@ function startDinoGame(canvasId, options = {}) {
     catRunImg.onerror = () => console.log("Could not load:", catRunImg.src);
     catStandImg.onerror = () => console.log("Could not load:", catStandImg.src);
 
-    const width = 35;
-
-    // Dino state
-    const dino = {
-        x: 60,
-        y: groundY - 40,
-        w: width, //player size
-        h: width*0.645, //player height
-        vy: 0,
-        onGround: true,
-    };
+    const obstacleImgs = [
+        { img: new Image(), src: "images/cute-duck.png" },
+        { img: new Image(), src: "images/cute-frog1.png" },
+        { img: new Image(), src: "images/cute-frog2.png" },
+        { img: new Image(), src: "images/cute-frog3.png" },
+        { img: new Image(), src: "images/plant1.png" },
+        { img: new Image(), src: "images/plant2.png" },
+    ];
 
     // Obstacles
+    let obstaclesReady = 0;
     let obstacles = [];
     let spawnTimer = 0;
     let spawnEvery = 60; // smaller means more frequent spawns
+
+    //check if loaded
+    for (const o of obstacleImgs) {
+        o.img.src = o.src;
+
+        o.img.onload = () => {
+            obstaclesReady += 1;
+        };
+
+        o.img.onerror = () => {
+            console.log("Could not load:", o.src);
+        };
+    }
 
     // Physics
     const gravity = 0.9;
@@ -140,19 +184,31 @@ function startDinoGame(canvasId, options = {}) {
         // Spawn obstacles
         spawnTimer += 1;
         if (spawnTimer >= spawnEvery) {
-        spawnTimer = 0;
+            spawnTimer = 0;
 
-        // Randomize spawn timing a bit
-        spawnEvery = 70 + Math.floor(Math.random() * 40);
+            // Randomize spawn timing a bit
+            spawnEvery = 70 + Math.floor(Math.random() * 40);
 
-        // Create a cactus like obstacle
-        const h = 30 + Math.floor(Math.random() * 30);
-        obstacles.push({
+            let prob = Math.random();
+
+            if (prob<0.1){
+                const pick = obstacleImgs[1].img;
+            }else{
+                const pick = obstacleImgs[Math.floor(Math.random() * obstacleImgs.length)].img;
+            }   
+
+            // Choose a size for the obstacle
+            const w = 28 + Math.floor(Math.random() * 18);
+            const h = 40 + Math.floor(Math.random() * 30);
+
+            obstacles.push({
             x: canvas.width + 10,
             y: groundY - h,
-            w: 18 + Math.floor(Math.random() * 14),
+            w: w,
             h: h,
-        });
+            img: pick, // store which image this obstacle uses
+            });
+
         }
 
         // Move obstacles
@@ -160,15 +216,6 @@ function startDinoGame(canvasId, options = {}) {
 
         // Remove off screen obstacles
         obstacles = obstacles.filter((o) => o.x + o.w > -10);
-
-        // Check collisions
-        for (const o of obstacles) {
-        if (hits(dino, o)) {
-            running = false;
-            onLose(displayScore);
-            return;
-        }
-        }
     }
 
     function draw() {
@@ -197,32 +244,45 @@ function startDinoGame(canvasId, options = {}) {
         }
         }  
 
+        //Obstacles
+                // Check collisions
+        for (const o of obstacles) {
+        // If the image is loaded, draw it
+            if (o.img && o.img.complete && o.img.naturalWidth > 0) {
+                ctx.drawImage(o.img, o.x, o.y, o.w, o.h);
+            } else {
+                // Fallback if image is not ready yet
+                ctx.fillStyle = "#000";
+                ctx.fillRect(o.x, o.y, o.w, o.h);
+            }
+        }
 
-        ctx.font = "18px sans-serif";
+        // ----- UI text (score + messages) -----
+
         const displayScore = Math.floor(score / 10);
-        ctx.fillText("Score: " + displayScore, 12, 24);
+        // padding from edges, responsive to canvas size
+        const pad = Math.round(Math.max(12, canvas.width * 0.03));
+
+        // Score (top left)
+        ctx.fillStyle = "#95143d";          // color for your UI text
+        ctx.textAlign = "left";             // left aligned for score
+        ctx.font = '18px "RusticRoadway"';  // same font family as your site (or use sans-serif if you prefer)
+        ctx.textBaseline = "top"; // makes y coordinate act like “top edge”
+        ctx.fillText("Score: " + displayScore, pad, pad);//15, 35); //fix x & y position of score
+
+        // Center message (win / game over)
+        ctx.textAlign = "center";           // center alignment for big message
 
         if (won) {
-            ctx.font = "22px sans-serif";
-            ctx.fillText("You win!", canvas.width / 2 - 40, canvas.height / 2);
+        ctx.font = '26px "RusticRoadway"';
+        ctx.fillText("You win!", canvas.width / 2, canvas.height / 2);
+        } else if (!running) {
+        ctx.font = '30px "RusticRoadway"';
+        ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2);
         }
 
-        // Obstacles
-        for (const o of obstacles) {
-        ctx.fillRect(o.x, o.y, o.w, o.h);
-        }
-
-        // Score text
-        ctx.font = "18px sans-serif";
-        ctx.fillText("Score: " + Math.floor(score / 10), 12, 24);
-
-        // Game over message
-        if (!running) {
-        ctx.font = "22px sans-serif";
-        ctx.fillText("Game Over", canvas.width / 2 - 55, canvas.height / 2);
-        ctx.font = "16px sans-serif";
-        ctx.fillText("Refresh to try again", canvas.width / 2 - 70, canvas.height / 2 + 24);
-        }
+        // Reset alignment if you draw more text later
+        ctx.textAlign = "left";
     }
 
     let lastTime = 0;

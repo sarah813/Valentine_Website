@@ -16,6 +16,8 @@ const gameContainer = document.getElementById("game-container");
 const canvas = document.getElementById("dino-canvas");
 const ctx = canvas.getContext("2d");
 const winContainer = document.getElementById("win-container");
+const looseContainer = document.getElementById("loose-container");
+const gameHint = document.getElementById("game-hint");
 
 // Prevent starting the game multiple times
 let gameStarted = false;
@@ -79,18 +81,41 @@ yesBtn.addEventListener("click", () => {
     
     gameStarted = true;
 
+    const originalHint = gameHint ? gameHint.textContent : "";
+    let seconds = 4;
+    if (gameHint) gameHint.textContent = `Get ready... `;
+
     console.log("gameContainer:", gameContainer);
     console.log("winContainer:", winContainer);
     console.log("title:", title);
 
-    startDinoGame("dino-canvas",{
+    const countdownId = setInterval(() => {
+      seconds -= 1;
+
+      if (seconds >= 0) {
+        if (gameHint) gameHint.textContent = `Starting in ${seconds}`;
+      } else {
+        clearInterval(countdownId);
+      }
+    }, 1000);
+
+    setTimeout(() => {
+      if (gameHint) gameHint.textContent = originalHint;
+
+      startDinoGame("dino-canvas", {
         targetScore: 100,
         onWin: () => {
-            gameContainer.style.display = "none";
-            winContainer.style.display ="block";
-            title.textContent = "You did it! Onto the next task";
+          gameContainer.style.display = "none";
+          winContainer.style.display = "block";
+          title.textContent = "You did it! Onto the next level";
         },
-    });
+
+        onLose: () => {
+            //gameContainer.style.display = "none";
+            looseContainer.style.display ="block";
+        },
+      });
+    }, 5000);
 
   }
 });

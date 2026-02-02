@@ -43,13 +43,18 @@
                 
                 <!-- Dino game, hidden until clicking Yes -->
                 <div id="game-container" style="display: none">
-                    <canvas id="dino-canvas" width="700" height="220"></canvas>
-                    <p class="game-hint">Press Space to jump, or tap on the game</p>
+                    <canvas id="dino-canvas"></canvas>
+                    <p class="game-hint" id="game-hint">Press Space to jump, or tap on the game</p>
                 </div>
 
                 <div id="win-container" style="display: none">
                     <img src="images/cat_dance.gif" alt="" class="win-cat" />
                     <p class="win-text"></p>
+                </div>
+
+                <div id="loose-container" style="display: none">
+                    <p class="loose-text"></p>
+                    <img src="images/restart.png" alt="" class="loose-cat" />
                 </div>
 
                 <p id="final-text" class="final-text" style="display: none">
