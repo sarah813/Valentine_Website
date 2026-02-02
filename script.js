@@ -110,10 +110,16 @@ yesBtn.addEventListener("click", () => {
           title.textContent = "You did it! Onto the next level";
         },
 
-        onLose: () => {
-            //gameContainer.style.display = "none";
-            looseContainer.style.display ="block";
-        },
+          onLose: () => {
+            gameContainer.style.display = "none";
+            winContainer.style.display = "none";
+
+            const looseText = looseContainer.querySelector(".loose-text");
+            if (looseText) looseText.textContent = "Game Over!";
+
+            // Use flex so the restart image sits directly under the text
+            looseContainer.style.display = "flex";
+          },
       });
     }, 5000);
 

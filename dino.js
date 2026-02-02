@@ -2,6 +2,8 @@ console.log("dino.js loaded");
 
 function startDinoGame(canvasId, options = {}) {
 
+    let previewObstaclesEnabled = false; // toggle at runtime (no reload)
+
     // Basic game settings
     const canvas = document.getElementById(canvasId);
     const ctx = canvas.getContext("2d");
@@ -38,8 +40,53 @@ function startDinoGame(canvasId, options = {}) {
     }
     }
 
+    function previewObstacles() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // optional background ground line
+        ctx.beginPath();
+        ctx.moveTo(0, groundY);
+        ctx.lineTo(canvas.width, groundY);
+        ctx.stroke();
+
+      // draw each obstacle with its own w/h in a row
+      let x = 20;
+      const allPreview = obstacleImgs.concat(obstacleRareImgs);
+      for (const o of allPreview) {
+          const w = o.w ?? 40;  // fallback if you haven't added sizes yet
+          const h = o.h ?? 40;
+
+          const y = groundY - h;
+
+            if (o.img.complete && o.img.naturalWidth > 0) {
+            ctx.drawImage(o.img, x, y, w, h);
+            } else {
+            // fallback box if image isn't loaded yet
+            ctx.fillRect(x, y, w, h);
+            }
+
+            // move x to the right for next one
+            x += w + 20;
+        }
+    }
+
+
     resizeCanvas();
-    window.addEventListener("resize", resizeCanvas);
+  window.addEventListener("resize", resizeCanvas);
+
+  // Toggle obstacle preview without reloading (press P or call in console)
+  window.toggleObstaclePreview = () => {
+    previewObstaclesEnabled = !previewObstaclesEnabled;
+    if (previewObstaclesEnabled) {
+      previewObstacles(); // immediate draw
+    }
+  };
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key.toLowerCase() === "p") {
+      window.toggleObstaclePreview();
+    }
+  });
 
     const width = 35;
 
@@ -69,22 +116,38 @@ function startDinoGame(canvasId, options = {}) {
     catStandImg.onerror = () => console.log("Could not load:", catStandImg.src);
 
     const obstacleImgs = [
-        { img: new Image(), src: "images/cute-duck.png" },
-        { img: new Image(), src: "images/cute-frog1.png" },
-        { img: new Image(), src: "images/cute-frog2.png" },
-        { img: new Image(), src: "images/cute-frog3.png" },
-        { img: new Image(), src: "images/plant1.png" },
-        { img: new Image(), src: "images/plant2.png" },
+        { img: new Image(), src: "images/cute-frog1.png", w: 35, h: 40 },
+        { img: new Image(), src: "images/cute-frog2.png", w: 35, h: 50 },
+        { img: new Image(), src: "images/cute-frog3.png", w: 35, h: 70  },
+
+        { img: new Image(), src: "images/plant1.png", w: 30, h: 55 },
+        { img: new Image(), src: "images/plant2.png", w: 44, h: 70 },
     ];
+
+    const obstacleRareImgs = [
+        { img: new Image(), src: "images/cute-duck.png", w: 35, h: 45 },
+    ]
 
     // Obstacles
     let obstaclesReady = 0;
     let obstacles = [];
     let spawnTimer = 0;
-    let spawnEvery = 60; // smaller means more frequent spawns
+      let spawnEvery = 40; // smaller means more frequent spawns
 
     //check if loaded
     for (const o of obstacleImgs) {
+        o.img.src = o.src;
+
+        o.img.onload = () => {
+            obstaclesReady += 1;
+        };
+
+        o.img.onerror = () => {
+            console.log("Could not load:", o.src);
+        };
+    }
+
+    for (const o of obstacleRareImgs) {
         o.img.src = o.src;
 
         o.img.onload = () => {
@@ -187,28 +250,38 @@ function startDinoGame(canvasId, options = {}) {
             spawnTimer = 0;
 
             // Randomize spawn timing a bit
-            spawnEvery = 70 + Math.floor(Math.random() * 40);
+              spawnEvery = 45 + Math.floor(Math.random() * 25);
 
             let prob = Math.random();
+            let pick = null;
 
-            if (prob<0.1){
-                const pick = obstacleImgs[1].img;
-            }else{
-                const pick = obstacleImgs[Math.floor(Math.random() * obstacleImgs.length)].img;
-            }   
+              if (prob < 0.1) {
+                  pick = obstacleRareImgs[0];
+              } else {
+                  pick = obstacleImgs[Math.floor(Math.random() * obstacleImgs.length)];
+              }
+  
+              // Choose a size for the obstacle (fallback if not provided)
+              const w = pick.w ?? (28 + Math.floor(Math.random() * 18));
+              const h = pick.h ?? (40 + Math.floor(Math.random() * 30));
+  
+              obstacles.push({
+                  img: pick.img,
+                  x: canvas.width + 10,
+                  y: groundY - h,
+                  w,
+                  h,
+              });
 
-            // Choose a size for the obstacle
-            const w = 28 + Math.floor(Math.random() * 18);
-            const h = 40 + Math.floor(Math.random() * 30);
+        }
 
-            obstacles.push({
-            x: canvas.width + 10,
-            y: groundY - h,
-            w: w,
-            h: h,
-            img: pick, // store which image this obstacle uses
-            });
-
+        // Check collisions after movement
+        for (const o of obstacles) {
+            if (hits(dino, o)) {
+                running = false;
+                onLose(displayScore);
+                return;
+            }
         }
 
         // Move obstacles
@@ -287,12 +360,20 @@ function startDinoGame(canvasId, options = {}) {
 
     let lastTime = 0;
 
-    function loop(time) {
+  function loop(time) {
+
+      if (previewObstaclesEnabled) {
+          previewObstacles();
+          requestAnimationFrame(loop); // keep preview updating (and redraw on resize)
+          return; // stop here, no gameplay
+      }
+    
     const dt = time - lastTime;
     lastTime = time;
 
     update(dt);
     draw();
+
 
     requestAnimationFrame(loop);
     }
