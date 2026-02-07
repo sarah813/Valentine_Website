@@ -22,6 +22,7 @@
   --btn-width: clamp(120px, calc(var(--content-width) * 0.32), 200px);       /* yes/no buttons */
   --btn-gap: clamp(24px, calc(var(--content-width) * 0.12), 80px);           /* space between buttons */
   --cat-width: clamp(120px, calc(var(--content-width) * 0.26), 200px);        /* win/lose cat */
+  --heart-cat-width: clamp(120px, calc(var(--content-width) * 0.3), 200px);
   --sad-cat-width: clamp(100px, calc(var(--content-width) * 0.28), 200px);
 }
 
@@ -377,6 +378,27 @@ p {
   grid-column: 3;          /* button in the right column */
   justify-self: start;     /* sits near the cat, not at far right */
   margin-left: 50px; 
+}
+
+.heart-cat {
+  width: var(--heart-cat-width);
+  height: auto;
+  grid-column: 2;          /* cat in the center column */
+  justify-self: center;
+  margin-top: 5%;
+}
+
+#level2 {
+  display: none;           /* JS will override this */
+  align-items: center;
+}
+
+
+.start-level-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 
 

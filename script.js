@@ -23,6 +23,12 @@ const looseContainer = document.getElementById("loose-container");
 const gameHint = document.getElementById("game-hint");
 const restartBtn = document.getElementById("restart-btn");
 
+//Level 2
+const nextBtn = document.getElementById("next-btn");
+const startBtn = document.getElementById("start-btn");
+const startLevel2 = document.getElementById("level2");
+const multipleChoice = document.getElementById("MCQ");
+
 // Prevent starting the game multiple times
 let gameStarted = false;
 
@@ -141,7 +147,7 @@ yesBtn.addEventListener("click", () => {
       if (gameHint) gameHint.textContent = originalHint;
 
       startDinoGame("dino-canvas", {
-        targetScore: 50,
+        targetScore: 10,
         onWin: () => {
           gameContainer.style.display = "none";
           winContainer.style.display = "flex";
@@ -186,4 +192,18 @@ restartBtn.addEventListener("click", () => {
   yesBtn.click();
 });
 
+//Level 2:
+nextBtn.addEventListener("click",() => {
+    looseContainer.style.display = "none";
+    winContainer.style.display = "none";
+    title.textContent = "Now, let's see if you really love me!";
+    startLevel2.style.display = "block";
+})
 
+startBtn.addEventListener("click",() => {
+    looseContainer.style.display = "none";
+    winContainer.style.display = "none";
+    startLevel2.style.display = "none";
+    title.textContent = "Let's see if you can answer these answers?";
+    multipleChoice.style.display = "block";
+})
