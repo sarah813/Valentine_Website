@@ -6,6 +6,9 @@ const letter_window = document.querySelector(".letter-window");
 const noBtn = document.querySelector(".no-btn");
 const yesBtn = document.querySelector(".btn[alt='Yes']");
 
+const tooLongContainer = document.getElementById("toolong-container");
+const grumpyCat = document.getElementById("grumpy-cat");
+
 const title = document.getElementById("letter-title");
 //const catImg = document.getElementById("letter-cat");
 const buttons = document.getElementById("letter-buttons");
@@ -18,6 +21,7 @@ const ctx = canvas.getContext("2d");
 const winContainer = document.getElementById("win-container");
 const looseContainer = document.getElementById("loose-container");
 const gameHint = document.getElementById("game-hint");
+const restartBtn = document.getElementById("restart-btn");
 
 // Prevent starting the game multiple times
 let gameStarted = false;
@@ -59,12 +63,46 @@ letter_window.addEventListener("pointermove", (e) => {
     const scale = minScale + (1 - minScale) * dPower;
 
     noBtn.style.transform = `scale(${scale})`;
+    
+    //grumpy cat
+
+    const intensity = 1 - dPower; // 0 far, 1 close
+
+    grumpyCat.style.opacity = intensity;
+
+    // Rotation: far = -90deg, close = 0deg
+    const startAngle = -90;  // hidden
+    const endAngle = -30;    // still tilted when fully visible
+
+    const angle = startAngle + (endAngle - startAngle) * intensity;
+
+    // Translate: far = 110%, close = 0%
+    const slide = (1 - intensity) * 110;
+
+    grumpyCat.style.transform = `translateX(${slide}%) rotate(${angle}deg)`;
+
 })
 
 letter_window.addEventListener("pointerleave", () => {
   // Reset when the cursor leaves the window
   noBtn.style.transform = "scale(1)";
 });
+
+yesBtn.addEventListener("animationend", () => {
+    const state = getComputedStyle(yesBtn).opacity;
+    console.log("opacity after fade:", state);
+
+    if(state == "0.1"){
+        yesBtn.classList.add("disabled");
+    }
+    
+    buttons.style.display = "none";
+
+    setTimeout(() => {
+    tooLongContainer.style.display = "block"; // or "flex" if you want flex layout
+    }, 400); // 3000 ms = 3 seconds
+ 
+})
 
 yesBtn.addEventListener("click", () => {
   // 1) Change the title text
@@ -103,10 +141,10 @@ yesBtn.addEventListener("click", () => {
       if (gameHint) gameHint.textContent = originalHint;
 
       startDinoGame("dino-canvas", {
-        targetScore: 100,
+        targetScore: 50,
         onWin: () => {
           gameContainer.style.display = "none";
-          winContainer.style.display = "block";
+          winContainer.style.display = "flex";
           title.textContent = "You did it! Onto the next level";
         },
 
@@ -125,4 +163,27 @@ yesBtn.addEventListener("click", () => {
 
   }
 });
+
+// Restart button click
+restartBtn.addEventListener("click", () => {
+  // 1) Hide the lose screen
+  looseContainer.style.display = "none";
+  // 2) Hide win screen too (just in case)
+  winContainer.style.display = "none";
+  // 3) Show the game again
+  gameContainer.style.display = "block";
+  // 4) Reset title (optional: you can keep your “prove yourself”)
+  title.textContent = "You thought it would be easy? First prove yourself!";
+
+  // 5) Allow the game to start again
+  gameStarted = false;
+
+  yesBtn.classList.remove("disabled")
+
+  yesBtn.style.opacity = "1"
+
+  // 6) Simulate clicking Yes to restart the whole flow
+  yesBtn.click();
+});
+
 

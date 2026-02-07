@@ -26,7 +26,7 @@ function startDinoGame(canvasId, options = {}) {
     const minW = 300;
 
     const w = Math.max(minW, Math.min(maxW, window.innerWidth * 0.8));
-    const h = w * 0.35;
+      const h = w * 0.28;
 
     canvas.width = Math.floor(w);
     canvas.height = Math.floor(h);

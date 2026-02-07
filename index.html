@@ -25,6 +25,8 @@
 
     </div>
 
+    <img src="images/grumpy-cat.png" id="grumpy-cat" alt="Grumpy" />
+
     <!-- Letter Screen -->
     <div id="letter-container"> <!-- Full page -->
 
@@ -40,6 +42,11 @@
                         <img src="images/no.png" class="btn no-btn" alt="No" />
                     </div>
                 </div>
+
+                <div id="toolong-container" style="display: none">
+                    <img src="images/cat-crying.gif" class="sad-cat" alt="Sad" />
+                    <h1 class="sad-title" id="sad-title">Bowohhh why would you take so long to think about it...?</h1>
+                </div>
                 
                 <!-- Dino game, hidden until clicking Yes -->
                 <div id="game-container" style="display: none">
@@ -48,13 +55,20 @@
                 </div>
 
                 <div id="win-container" style="display: none">
-                    <img src="images/cat_dance.gif" alt="" class="win-cat" />
                     <p class="win-text"></p>
+                    <div class="win-row">
+                        <img src="images/cat_dance.gif" alt="" class="win-cat" />
+                        <button id="next-btn" class="next-level-btn" type="button" aria-label="Next level">
+                            <img src="images/next-level.png" alt="" class="next-icon" />
+                        </button>
+                    </div>
                 </div>
 
                 <div id="loose-container" style="display: none">
                     <p class="loose-text"></p>
-                    <img src="images/restart.png" alt="" class="restart" />
+                    <button id="restart-btn" class="restart-btn" type="button" aria-label="Restart game">
+                        <img src="images/restart-btn.png" alt="" class="restart-icon" />
+                    </button>
                 </div>
 
                 <p id="final-text" class="final-text" style="display: none">
