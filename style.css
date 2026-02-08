@@ -189,11 +189,12 @@ p {
     box-sizing: border-box;
     transform: translateX(clamp(-30px, -1.5vw, 0px));
     max-height: var(--content-max-height);
-    overflow: hidden;                      /* keeps content inside the window */
+    overflow-y: auto;
+    overflow-x: hidden;                     /* keeps content inside the window */
     display: flex;
     flex-direction: column;
     align-items: center;
-    border: 2px solid #95143d;  /*change letter border here! */
+    /*border: 2px solid #95143d;  change letter border here! */
     gap: var(--content-gap);
     font-size: var(--content-font);          /* all inner text scales from here */
   }
@@ -370,6 +371,7 @@ p {
   border: none;
   padding: 0;
   cursor: pointer;
+  margin-right: 10%;
 }
 
 .next-icon{
@@ -442,6 +444,115 @@ p {
     background-color: rgba(255,240,240,0.5);
     border-radius: 12px;
 }
+
+/* Level 2: Multiple Choice*/
+#MCQ {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start; /* left align MCQ content */
+    gap: 12px;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+  }
+
+#mcq-progress {
+  margin: 0;
+  opacity: 0.8;
+}
+
+#mcq-question {
+    margin: 0;
+    text-align: left;
+    font-size: 1.3em;
+    padding-left: 12px; /* keep question away from left edge */
+  }
+
+#mcq-options{
+    grid-column: 1 / 2;
+    grid-row: 1 / 3;
+
+    overflow: auto;          /* container scrolls if needed */
+    min-height: 0;
+
+    padding-left: 12px;      /* keep options away from left edge */
+    box-sizing: border-box;
+
+    display: grid;           /* stack options nicely */
+    gap: 10px;
+    text-align: left;
+    justify-items: start;
+    font-size: 0.95em;       /* slightly smaller so boxes fit */
+  }
+
+.mcq-option {
+    width: fit-content;      /* keep option boxes tight to text */
+    max-width: 100%;
+    justify-content: flex-start;
+    text-align: left;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+    border: 2px solid rgba(149, 20, 61, 0.35);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+.mcq-option.is-selected{
+  background: rgba(149, 20, 61, 0.35);  /* filled color */
+}
+
+
+.options-row{
+  flex: 1;
+  min-height: 0;
+
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: 1fr auto;
+  width: 100%;
+  column-gap: 12px;
+}
+
+.mcq-footer{
+  grid-column: 2 / 3;
+  grid-row: 2 / 3;
+  justify-self: end;
+  align-self: end;
+}
+
+.mcq-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 2px solid rgba(149, 20, 61, 0.35);
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.mcq-option input {
+  transform: scale(1.2);
+}
+
+.mcq-next {
+  background: transparent;
+  border: none;
+  padding: 8px 14px;
+  cursor: pointer;
+  margin-left: auto;         /* force to the right */
+  outline: none;
+  box-shadow: none;
+}
+
+.next{
+  margin-top: 5px;
+  width: clamp(40px, calc(var(--content-width) * 0.5), 120px); /* restart image size */
+  display: block;
+}
+
 
 @media (max-width: 700px) {
   :root {

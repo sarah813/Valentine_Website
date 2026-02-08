@@ -27,7 +27,14 @@ const restartBtn = document.getElementById("restart-btn");
 const nextBtn = document.getElementById("next-btn");
 const startBtn = document.getElementById("start-btn");
 const startLevel2 = document.getElementById("level2");
+
+// MCQ elements
 const multipleChoice = document.getElementById("MCQ");
+const mcqProgress = document.getElementById("mcq-progress");
+const mcqQuestion = document.getElementById("mcq-question");
+const mcqOptions = document.getElementById("mcq-options");
+const mcqFeedback = document.getElementById("mcq-feedback");
+const mcqNext = document.getElementById("mcq-next");
 
 // Prevent starting the game multiple times
 let gameStarted = false;
@@ -200,10 +207,80 @@ nextBtn.addEventListener("click",() => {
     startLevel2.style.display = "block";
 })
 
+// 10 questions
+const QUESTIONS = [
+  { q: "What is the name of my dog?", options: ["Ceyna", "Seina", "Cina", "Ceyla"], answer: 0 },
+  { q: "What is my fevorite flower?", options: ["Lillies", "Roses", "Carnation", "Peonies"], answer: 2 },
+  { q: "Pick my favorite date location", options: ["Coffee place", "Flowerfield", "Restaurant", "Beach"], answer: 1 },
+  { q: "What do I like most:", options: ["Water", "Mountains", "City", "Forest"], answer: 1 },
+  { q: "How to best surprise me?", options: ["Flowers", "Love letter/Note", "Surprise Date", "Movie Night with snacks"], answer: [0,1,2,3] },
+  { q: "What to do when I am sad", options: ["Hug me & say all will be okay", "Give me space & let me come to you", "Find solutions to my problems", "A hot drink"], answer: 0 },
+  { q: "If I am stressed, I want", options: ["Silence", "A cuddle", "A plan", "Help with my task"], answer: 2 },
+  { q: "My favorite genre", options: ["Crime", "History", "Romance", "Action"], answer: 0 },
+  { q: "What do I like most about you", options: ["Your eyes", "Your humour", "Your comfort", "Your amazing body"], answer: [0,1,2,3] },
+  { q: "How many cousins do I have?", options: ["6 girls, no guys", "4 girls, one guy", "5 girls, 2 guys", "7 girls, one guy"], answer: 3 },
+  { q: "Who loves who more", options: ["I love you more", "You love me more", "Equal!"], answer: 0 },
+];
+
+
+let answers = [];
+
+function renderQuestion(i) {
+      const item = QUESTIONS[i];     
+
+      // Show the question in the main title area
+      title.textContent = item.q;
+    // Keep mcq-question as a subtitle (set on start)
+
+      // reset selections for this question
+      answers = [];
+      mcqOptions.innerHTML = "";
+
+      item.options.forEach((text, idx) => {
+          const opt = document.createElement("div");
+          opt.className = "mcq-option";
+          opt.textContent = text;
+
+          //When clicking an option
+          opt.addEventListener("click", () => {
+            console.log("clicked option index:", idx);
+            if(opt.classList.contains("is-selected")){
+                opt.classList.remove("is-selected");
+                answers = answers.filter(x => x !== idx);
+                console.log("after remove:", answers);
+            }else{
+                opt.classList.add("is-selected");
+                answers.push(idx);
+                console.log("selected idx:", idx);
+                console.log("Answer Array:", answers);
+            }
+          })
+          mcqOptions.appendChild(opt);
+      });  
+}
+
+let mcqIndex = 0;
+let mcqScore = 0;
+
 startBtn.addEventListener("click",() => {
     looseContainer.style.display = "none";
     winContainer.style.display = "none";
     startLevel2.style.display = "none";
-    title.textContent = "Let's see if you can answer these answers?";
+    title.textContent = "Let's see if you can answer these questions.";
     multipleChoice.style.display = "block";
+    
+    mcqIndex = 0;
+    mcqScore = 0;
+
+  renderQuestion(mcqIndex);
+})
+
+mcqNext.addEventListener("click", () => {
+    const current = QUESTIONS[mcqIndex];
+
+    const correct = 
+
+    if(answers == current.answer){
+        score += 1;
+    }
 })
