@@ -577,6 +577,74 @@ p {
   justify-self: center;
 }
 
+/* TODO List */
+#TodoList{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-left: 12px;
+  box-sizing: border-box;
+}
+
+.todo-items {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0;
+  width: 100%;
+}
+
+#todo-win {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+}
+
+#todo-progress {
+  margin: 0;
+  color: #95143d;
+  opacity: 0.9;
+  text-align: center;
+}
+
+.todo-item{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+
+  padding: 2px 12px;
+  border-radius: 12px;
+
+  user-select: none;
+}
+
+/* the square */
+.todo-box{
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(149, 20, 61, 0.6);
+  border-radius: 4px; /* make 0 if you want sharp corners */
+  flex: 0 0 auto;
+  background: transparent;
+}
+
+/* when selected: fill the square */
+.todo-item.is-selected .todo-box{
+  background: rgba(149, 20, 61, 0.35);
+}
+
+.heart {
+  width: var(--heart-cat-width);
+  height: auto;
+  grid-column: 2;          /* cat in the center column */
+  justify-self: center;
+  margin-top: 5%;
+}
+
 
 /*MEDIA*/
 
@@ -670,6 +738,7 @@ p {
       --content-font: clamp(26px, 1.9vw, 28px);
     }
 }
+
 
 
 

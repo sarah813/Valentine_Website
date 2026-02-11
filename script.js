@@ -45,6 +45,7 @@ const nextBtn2 = document.getElementById("next-btn-last");
 //To do list
 const todolist = document.getElementById("TodoList");
 const todolistItems = document.getElementById("todo-items");
+const todoWIN = document.getElementById("todo-win");
 
 // Prevent starting the game multiple times
 let gameStarted = false;
@@ -333,39 +334,87 @@ mcqNext.addEventListener("click", () => {
 const TODOList = [
   { t: "Flowers"},
   { t: "Good Mood"},
+  { t: "A Nice Shirt"},
+  { t: "My Favorite Chocolate"},
+  { t: "A surprise?"},
 ];
 
-nextBtn2.addEventListener("click", () => {
+let Achieved = 0; 
+
+function openTodoList() {
+    hide(buttons);
+    hide(gameContainer);
+    hide(winContainer);
+    hide(looseContainer);
+    hide(multipleChoice);
+    hide(winCont);
+    hide(looseCont);
+    hide(startLevel2);
+    hide(tooLongContainer);
     winCont.style.display = "none";
-    todolist.style.display = "block";
-    
+
+    show(todolist, "block");
+    title.textContent = "Perfect! You are ready for the special day ♡";
+
     todolistItems.innerHTML = "";
+    const length = TODOList.length;
 
-    item.options.forEach((text, idx) => {
+    TODOList.forEach((item) => {
           const opt = document.createElement("div");
-          opt.className = "mcq-option";
-          opt.textContent = text;
+          opt.className = "todo-item";
 
-          //When clicking an option
-          opt.addEventListener("click", () => {
-            console.log("clicked option index:", idx);
+          const box = document.createElement("div");
+          box.className = "todo-box";
+
+          const text = document.createElement("div");
+          text.className = "todo-text";
+          text.textContent = item.t; 
+
+          opt.appendChild(box);
+          opt.appendChild(text);      
+
+        //When clicking an option
+        opt.addEventListener("click", () => {
+
             if(opt.classList.contains("is-selected")){
                 opt.classList.remove("is-selected");
-                answers = answers.filter(x => x !== idx);
-                console.log("after remove:", answers);
+                Achieved -= 1;
             }else{
                 opt.classList.add("is-selected");
-                answers.push(idx);
-                console.log("selected idx:", idx);
-                console.log("Answer Array:", answers);
-            }   
-           })
-    })
+                Achieved += 1;
+                console.log("Achieved =", Achieved);
+
+                if(length == Achieved){
+                    hide(todolistItems);
+                    title.textContent = "Wow you are so ready to be my date!";
+                    show(todoWIN, "flex");
+                }
+            } 
+            
+        });
+
+        todolistItems.appendChild(opt);
+    });
+}
+
+nextBtn2.addEventListener("click", () => {
+    openTodoList();
 })
 
 
 
 nextBtn2.addEventListener("click", () => {})
+
+// Dev shortcut: ?jump=todo
+const jumpTarget = new URLSearchParams(window.location.search).get("jump");
+if (jumpTarget === "todo") {
+  envelope.style.display = "none";
+  letter.style.display = "flex";
+  requestAnimationFrame(() => {
+    letter_window.classList.add("open");
+  });
+  openTodoList();
+}
 
 function updateMcqScore(score) {
   mcqScoreEl.textContent = `Score: ${score}`;
@@ -399,6 +448,8 @@ fullRestartBtn.addEventListener("click", () => {
   mcqScoreGen = 0;
   answers = [];
 });
+
+
 
 
 
