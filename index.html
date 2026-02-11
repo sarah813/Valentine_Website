@@ -78,19 +78,48 @@
                 </div>
 
                 <div id="MCQ" style="display: none">
-                    <p id="mcq-progress"></p>
-
                     <h1 id="mcq-question"></h1>
-
-                    <div class="options-row">
-                        <div id="mcq-options" class="mcq-options"></div>
-                        <div class="mcq-footer">
-                            <button id="mcq-next" class="mcq-next" type="button">
-                                <img src="images/Next.png" alt="" class="next" />
-                            </button>
-                        </div>
+                    <p id="mcq-score"></p>
+                    <p id="mcq-progress"></p>                                
+                    <div id="mcq-options" class="mcq-options"></div>
+                    <div class="mcq-footer">
+                        <button id="mcq-next" class="mcq-next" type="button">
+                            <img src="images/Next.png" alt="" class="next" />
+                        </button>
+                    </div>          
+                </div>
+            
+                <div id="WIN-MCQ" style="display: none">
+                    <!--<p class="win-text">Yeay you actually love me!</p>-->
+                    <div class="win-row">
+                        <img src="images/love-penguin.gif" alt="" class="happy-penguin" />
                     </div>
-              
+                    <button id="next-btn-last" class="next-level-btn" type="button" aria-label="Next level 2">
+                        <img src="images/next-level.png" alt="" class="next-icon" />
+                    </button>         
+                </div>
+
+                <div id="LOOSE-MCQ" style="display: none">
+                    <!--<p class="win-text">Yeay you actually love me!</p>-->
+                    <div class="win-row">
+                        <img src="images/crying.gif" alt="" class="loose-cat" />
+                    </div>
+                    <button id="restart-btn-2" class="restart-btn" type="button" aria-label="Restart whole">
+                        <img src="images/restart-btn.png" alt="" class="restart-icon" />
+                    </button>        
+                </div>
+
+                <div id="TodoList" style="display: none">
+
+                    <div id="todo-items" class="todo-items"></div>
+
+                     <p id="todo-progress"></p>
+
+                     <div id="todo-win" style="display: none">
+                        <p class="win-text">Perfect! You are ready for the special day ♡</p>
+                        <img src="images/cat_dance.gif" alt="" class="win-cat" />
+                    </div>
+                    
                 </div>
 
             </div>

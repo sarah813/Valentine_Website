@@ -24,7 +24,11 @@
   --cat-width: clamp(120px, calc(var(--content-width) * 0.26), 200px);        /* win/lose cat */
   --heart-cat-width: clamp(120px, calc(var(--content-width) * 0.3), 200px);
   --sad-cat-width: clamp(100px, calc(var(--content-width) * 0.28), 200px);
+  --cat-loose-width: clamp(120px, calc(var(--content-width) * 0.5), 250px);
+  --penguin-width: clamp(120px, calc(var(--content-width) * 0.5), 250px);
 }
+
+.is-hidden { display: none !important; }
 
 /* Center the whole page content reliably */
 body {
@@ -188,7 +192,7 @@ p {
     padding: var(--content-padding);
     box-sizing: border-box;
     transform: translateX(clamp(-30px, -1.5vw, 0px));
-    max-height: var(--content-max-height);
+    height: var(--content-max-height); /* max-height: var(--content-max-height); */
     overflow-y: auto;
     overflow-x: hidden;                     /* keeps content inside the window */
     display: flex;
@@ -257,7 +261,7 @@ p {
     position: relative;
     z-index: 2;
     transform-origin: center center;
-    transition: transform 0.25s ease;
+    transition: transform 0.18s ease;
     opacity: 1;
 }
 
@@ -289,8 +293,9 @@ p {
     margin-bottom: 5%;
 }
 
-.sad-title {
-  color: #8d8989; /* black */
+#sad-title {
+    color: #8d8989; /* black */
+    font-size: 0.6em !important; /* force smaller everywhere */
 }
 
 
@@ -447,14 +452,26 @@ p {
 
 /* Level 2: Multiple Choice*/
 #MCQ {
-    display: none;
-    flex-direction: column;
-    align-items: flex-start; /* left align MCQ content */
-    gap: 12px;
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-  }
+  display: none;
+  flex-direction: column;
+  /*align-items: flex-start; /* left align MCQ content */
+  gap: 12px;
+  width: 100%;
+  flex: 1;
+  height: 100%;
+  min-height: 0;
+  align-self: stretch;
+}
+
+#mcq-score {
+  margin: 0;
+  color: #95143d;
+  opacity: 0.9;
+  align-self: flex-start; /* keep score on the left */
+  text-align: left;
+  width: 100%;
+  padding-left: 12px;
+}
 
 #mcq-progress {
   margin: 0;
@@ -468,69 +485,52 @@ p {
     padding-left: 12px; /* keep question away from left edge */
   }
 
-#mcq-options{
-    grid-column: 1 / 2;
-    grid-row: 1 / 3;
-
-    overflow: auto;          /* container scrolls if needed */
-    min-height: 0;
-
-    padding-left: 12px;      /* keep options away from left edge */
-    box-sizing: border-box;
-
-    display: grid;           /* stack options nicely */
-    gap: 10px;
-    text-align: left;
-    justify-items: start;
-    font-size: 0.95em;       /* slightly smaller so boxes fit */
-  }
-
-.mcq-option {
-    width: fit-content;      /* keep option boxes tight to text */
-    max-width: 100%;
-    justify-content: flex-start;
-    text-align: left;
+.mcq-options {
+  flex: 1;               /* take remaining space */
+  align-self: stretch;   /* fill width so footer can sit at bottom */
+  min-height: 0;
+  overflow: auto;
 
   display: flex;
-  align-items: center;
+  flex-wrap: wrap;
   gap: 10px;
-  padding: 10px 12px;
-    border: 2px solid rgba(149, 20, 61, 0.35);
-    border-radius: 12px;
-    cursor: pointer;
-  }
+
+  padding-left: 0;
+  margin-top: 5%;
+  margin-bottom: 5%;
+  box-sizing: border-box;
+  /*border: #95143d solid 1px;*/
+
+  align-items: center;
+  justify-content: center; /* center options as a group */
+}
 
 .mcq-option.is-selected{
   background: rgba(149, 20, 61, 0.35);  /* filled color */
 }
 
-
-.options-row{
-  flex: 1;
-  min-height: 0;
-
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: 1fr auto;
-  width: 100%;
-  column-gap: 12px;
-}
-
-.mcq-footer{
-  grid-column: 2 / 3;
-  grid-row: 2 / 3;
-  justify-self: end;
-  align-self: end;
-}
-
 .mcq-option {
-  display: flex;
+  display: inline-flex;     /* plays nicely inside flex-wrap container */
   align-items: center;
   gap: 10px;
+
   padding: 10px 12px;
   border: 2px solid rgba(149, 20, 61, 0.35);
   border-radius: 12px;
   cursor: pointer;
+
+  width: fit-content;       /* box hugs the text */
+  max-width: 100%;
+}
+
+
+
+.mcq-footer{
+  margin-top: auto;          /* push to bottom of MCQ */
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* right side */
+  /*align-self: stretch;*/
 }
 
 .mcq-option input {
@@ -553,33 +553,124 @@ p {
   display: block;
 }
 
+.loose-cat {
+  width: var(--cat-loose-width);
+  height: auto;
+  grid-column: 2;          /* cat in the center column */
+  justify-self: center;
+}
+
+#restart-btn-2 img {
+  width: 70px;   /* smaller than the other restart */
+  height: auto;
+}
+
+#next-btn-last img {
+  width: 90px;   /* smaller than the other restart */
+  height: auto;
+}
+
+.happy-penguin {
+  width: var(--penguin-width);
+  height: auto;
+  grid-column: 2;          /* cat in the center column */
+  justify-self: center;
+}
+
+
+/*MEDIA*/
 
 @media (max-width: 700px) {
   :root {
-    --content-font: clamp(11px, 5.5vw, 18px); /* force visible shrink on narrow windows */
+    --content-font: clamp(11px, 6vw, 20px); /* force visible shrink on narrow windows */
+  }
+
+  .next {
+    width: clamp(28px, calc(var(--content-width) * 0.3), 70px); /* smaller next button */
+  }
+
+  #mcq-options {
+    font-size: 0.9em; /* slightly smaller options on narrow screens */
   }
 }
 
+@media (min-width: 700px) {
+  :root {
+    --content-font: clamp(24px, 2.8vw, 34px); /* target 800–899px (your 890px) */
+  }
+
+  #game-hint {
+  font-size: 0.7em;                    /* scales with --content-font */
+  }
+
+  .mcq-options {
+  margin-top: 4%;
+  margin-bottom: 2%;
+  }
+  /*#mcq-options {
+    font-size: 0.1em; /* smaller on large screens 
+  }*/
+}
+
+
 @media (min-width: 900px) {
   :root {
-    --content-font: clamp(20px, 2.6vw, 34px); /* bigger on large screens */
-       --letter-width: min(90vw, 800px);                  /* overall letter width */
+    --content-font: clamp(24px, 2.8vw, 34px); /* bigger on large screens */
+    --letter-width: min(90vw, 800px);                  /* overall letter width */
     --letter-height: calc(var(--letter-width) * 2 / 3);/* matches 3/2 aspect */
     --letter-padding: 20px;                            /* window side padding */
     --letter-top: clamp(30px, calc(var(--letter-height) * 0.5), 350px); /* content offset */
 
     --content-width: clamp(260px, calc(var(--letter-width) * 0.9), 650px);
-  --content-max-height: clamp(200px, calc(var(--letter-height) * 0.65), 420px);
-  --content-padding: 12px 16px 10px;
-  --content-gap: 12px;
-  --game-height: clamp(150px, calc(var(--content-max-height) * 0.6), 280px); /* keep hint visible */
-  --btn-width: clamp(120px, calc(var(--content-width) * 0.32), 200px);       /* yes/no buttons */
+    --content-max-height: clamp(200px, calc(var(--letter-height) * 0.65), 420px);
+    --content-padding: 12px 16px 10px;
+    --content-gap: 12px;
+    --game-height: clamp(150px, calc(var(--content-max-height) * 0.6), 280px); /* keep hint visible */
+    --btn-width: clamp(120px, calc(var(--content-width) * 0.32), 200px);       /* yes/no buttons */
     --btn-gap: clamp(24px, calc(var(--content-width) * 0.12), 80px);           /* space between buttons */
-    --cat-width: clamp(120px, calc(var(--content-width) * 0.28), 200px); 
+    --cat-width: clamp(120px, calc(var(--content-width) * 0.28), 200px);      
     }
 
   .letter-content {
     transform: translateX(-10px); /* nudge right on large screens */
   }
+
+  #mcq-options {
+    font-size: 0.8em; /* smaller on large screens */
+  }
+
+  #mcq-score {
+    font-size: 0.85em;
+  }
+
+  #mcq-question {
+    font-size: 1.1em; /* smaller on large screens */
+  }
+
+  #sad-title {
+    font-size: 0.8em !important; /* very small on big screens */
+  }
 }
+
+@media (min-width: 1100px) {
+  #mcq-score,
+  #mcq-options {
+    font-size: 0.9em; /* slightly bigger for half-width windows */
+  }
+
+  #sad-title {
+    font-size: 1em; /* very small on big screens */
+  }
+
+  #game-hint {
+  font-size: 0.8em;                    /* scales with --content-font */
+  }
+
+    :root {
+      --content-font: clamp(26px, 1.9vw, 28px);
+    }
+}
+
+
+
 

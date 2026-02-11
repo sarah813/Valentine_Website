@@ -30,11 +30,21 @@ const startLevel2 = document.getElementById("level2");
 
 // MCQ elements
 const multipleChoice = document.getElementById("MCQ");
+const mcqScoreEl = document.getElementById("mcq-score");
 const mcqProgress = document.getElementById("mcq-progress");
 const mcqQuestion = document.getElementById("mcq-question");
 const mcqOptions = document.getElementById("mcq-options");
 const mcqFeedback = document.getElementById("mcq-feedback");
 const mcqNext = document.getElementById("mcq-next");
+//Win Loose
+const winCont = document.getElementById("WIN-MCQ");
+const looseCont = document.getElementById("LOOSE-MCQ");
+const fullRestartBtn = document.getElementById("restart-btn-2");
+const nextBtn2 = document.getElementById("next-btn-last");
+
+//To do list
+const todolist = document.getElementById("TodoList");
+const todolistItems = document.getElementById("todo-items");
 
 // Prevent starting the game multiple times
 let gameStarted = false;
@@ -44,6 +54,16 @@ console.log("startDinoGame is", typeof startDinoGame);
 
 function clamp(value, min, max){
     return Math.max(min, Math.min(max,value));
+}
+
+function hide(el) {
+  if (!el) return;
+  el.style.display = "none";
+}
+
+function show(el, display = "block") {
+  if (!el) return;
+  el.style.display = display;
 }
 
 const minScale = 0.1;  // smallest size when very close
@@ -154,7 +174,7 @@ yesBtn.addEventListener("click", () => {
       if (gameHint) gameHint.textContent = originalHint;
 
       startDinoGame("dino-canvas", {
-        targetScore: 10,
+        targetScore: 30, //change max score here
         onWin: () => {
           gameContainer.style.display = "none";
           winContainer.style.display = "flex";
@@ -209,17 +229,17 @@ nextBtn.addEventListener("click",() => {
 
 // 10 questions
 const QUESTIONS = [
-  { q: "What is the name of my dog?", options: ["Ceyna", "Seina", "Cina", "Ceyla"], answer: 0 },
-  { q: "What is my fevorite flower?", options: ["Lillies", "Roses", "Carnation", "Peonies"], answer: 2 },
-  { q: "Pick my favorite date location", options: ["Coffee place", "Flowerfield", "Restaurant", "Beach"], answer: 1 },
-  { q: "What do I like most:", options: ["Water", "Mountains", "City", "Forest"], answer: 1 },
+  { q: "What is the name of my dog?", options: ["Ceyna", "Seina", "Cina", "Ceyla"], answer: [0] },
+  { q: "What is my fevorite flower?", options: ["Lillies", "Roses", "Carnation", "Peonies"], answer: [2] },
+  { q: "Pick my favorite date location", options: ["Coffee place", "Flowerfield", "Restaurant", "Beach"], answer: [1] },
+  { q: "What do I like most:", options: ["Water", "Mountains", "City", "Forest"], answer: [1] },
   { q: "How to best surprise me?", options: ["Flowers", "Love letter/Note", "Surprise Date", "Movie Night with snacks"], answer: [0,1,2,3] },
-  { q: "What to do when I am sad", options: ["Hug me & say all will be okay", "Give me space & let me come to you", "Find solutions to my problems", "A hot drink"], answer: 0 },
-  { q: "If I am stressed, I want", options: ["Silence", "A cuddle", "A plan", "Help with my task"], answer: 2 },
-  { q: "My favorite genre", options: ["Crime", "History", "Romance", "Action"], answer: 0 },
+  { q: "What to do when I am sad", options: ["Hug me & say all will be okay", "Give me space & let me come to you", "Find solutions to my problems", "A hot drink"], answer: [0] },
+  { q: "If I am stressed, I want", options: ["Silence", "A cuddle", "A plan", "Help with my task"], answer: [2] },
+  { q: "My favorite genre", options: ["Crime", "History", "Romance", "Action"], answer: [0] },
   { q: "What do I like most about you", options: ["Your eyes", "Your humour", "Your comfort", "Your amazing body"], answer: [0,1,2,3] },
-  { q: "How many cousins do I have?", options: ["6 girls, no guys", "4 girls, one guy", "5 girls, 2 guys", "7 girls, one guy"], answer: 3 },
-  { q: "Who loves who more", options: ["I love you more", "You love me more", "Equal!"], answer: 0 },
+  { q: "How many cousins do I have?", options: ["6 girls, no guys", "4 girls, one guy", "5 girls, 2 guys", "7 girls, one guy"], answer: [3] },
+  { q: "Who loves who more", options: ["I love you more", "You love me more", "Equal!"], answer: [0] },
 ];
 
 
@@ -261,6 +281,7 @@ function renderQuestion(i) {
 
 let mcqIndex = 0;
 let mcqScore = 0;
+let mcqScoreGen = 0;
 
 startBtn.addEventListener("click",() => {
     looseContainer.style.display = "none";
@@ -272,15 +293,112 @@ startBtn.addEventListener("click",() => {
     mcqIndex = 0;
     mcqScore = 0;
 
+    updateMcqScore(mcqScoreGen);
+
   renderQuestion(mcqIndex);
 })
 
 mcqNext.addEventListener("click", () => {
     const current = QUESTIONS[mcqIndex];
+    console.log(current);
 
-    const correct = 
+    if(current.answer.slice().sort().join(",") == answers.slice().sort().join(",")){
+        mcqScore += 1;
+        mcqScoreGen += 1;
+    }
 
-    if(answers == current.answer){
-        score += 1;
+    console.log("Score:", mcqScore);
+
+    mcqIndex += 1;
+    answers = []; // important: clear selection
+
+    if(mcqIndex < QUESTIONS.length){
+        renderQuestion(mcqIndex);
+        updateMcqScore(mcqScoreGen);
+    }else{
+        console.log("Finished! Score:", mcqScore);
+        
+        multipleChoice.style.display = "none";       
+
+          if(mcqScoreGen>6){
+              winCont.style.display = "block";
+              title.textContent = "Yeay you actually love me!";
+          }else{
+              looseCont.style.display = "block";
+              title.textContent = "Do you even know me at all..?";
+          }
     }
 })
+
+const TODOList = [
+  { t: "Flowers"},
+  { t: "Good Mood"},
+];
+
+nextBtn2.addEventListener("click", () => {
+    winCont.style.display = "none";
+    todolist.style.display = "block";
+    
+    todolistItems.innerHTML = "";
+
+    item.options.forEach((text, idx) => {
+          const opt = document.createElement("div");
+          opt.className = "mcq-option";
+          opt.textContent = text;
+
+          //When clicking an option
+          opt.addEventListener("click", () => {
+            console.log("clicked option index:", idx);
+            if(opt.classList.contains("is-selected")){
+                opt.classList.remove("is-selected");
+                answers = answers.filter(x => x !== idx);
+                console.log("after remove:", answers);
+            }else{
+                opt.classList.add("is-selected");
+                answers.push(idx);
+                console.log("selected idx:", idx);
+                console.log("Answer Array:", answers);
+            }   
+           })
+    })
+})
+
+
+
+nextBtn2.addEventListener("click", () => {})
+
+function updateMcqScore(score) {
+  mcqScoreEl.textContent = `Score: ${score}`;
+}
+
+//Loose MCQ
+
+
+fullRestartBtn.addEventListener("click", () => {
+  hide(looseCont);
+  hide(winCont);
+  hide(multipleChoice);
+  hide(gameContainer);
+  hide(winContainer);
+  hide(looseContainer);
+  hide(startLevel2);
+  hide(tooLongContainer);
+
+  show(buttons, "flex");          // IMPORTANT: buttons need flex
+  title.textContent = "Will you be my Valentine?";
+
+  yesBtn.classList.remove("disabled");
+  yesBtn.style.opacity = "1";
+
+  const winTextEl = winContainer.querySelector(".win-text");
+  if (winTextEl) winTextEl.textContent = ""; // clear old message
+
+  gameStarted = false;
+  mcqIndex = 0;
+  mcqScore = 0;
+  mcqScoreGen = 0;
+  answers = [];
+});
+
+
+

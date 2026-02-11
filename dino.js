@@ -197,9 +197,12 @@ function startDinoGame(canvasId, options = {}) {
     }
 
     // Controls: Space or ArrowUp
-    window.addEventListener("keydown", (e) => {
-        if (e.code === "Space" || e.code === "ArrowUp") jump();
-    });
+      window.addEventListener("keydown", (e) => {
+          if (e.code === "Space" || e.code === "ArrowUp") {
+              e.preventDefault(); // stop page scroll on first space
+              jump();
+          }
+      });
 
     // Controls: tap or click on the canvas
     canvas.addEventListener("pointerdown", () => jump());
