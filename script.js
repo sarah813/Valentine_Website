@@ -175,7 +175,7 @@ yesBtn.addEventListener("click", () => {
       if (gameHint) gameHint.textContent = originalHint;
 
       startDinoGame("dino-canvas", {
-        targetScore: 30, //change max score here
+        targetScore: 150, //change max score here
         onWin: () => {
           gameContainer.style.display = "none";
           winContainer.style.display = "flex";
@@ -234,7 +234,7 @@ const QUESTIONS = [
   { q: "What is my fevorite flower?", options: ["Lillies", "Roses", "Carnation", "Peonies"], answer: [2] },
   { q: "Pick my favorite date location", options: ["Coffee place", "Flowerfield", "Restaurant", "Beach"], answer: [1] },
   { q: "What do I like most:", options: ["Water", "Mountains", "City", "Forest"], answer: [1] },
-  { q: "How to best surprise me?", options: ["Flowers", "Love letter/Note", "Surprise Date", "Movie Night with snacks"], answer: [0,1,2,3] },
+  { q: "How to best surprise me?", options: ["Flowers", "Love letter", "Surprise Date", "Movie Night with snacks"], answer: [0,1,2,3] },
   { q: "What to do when I am sad", options: ["Hug me & say all will be okay", "Give me space & let me come to you", "Find solutions to my problems", "A hot drink"], answer: [0] },
   { q: "If I am stressed, I want", options: ["Silence", "A cuddle", "A plan", "Help with my task"], answer: [2] },
   { q: "My favorite genre", options: ["Crime", "History", "Romance", "Action"], answer: [0] },
@@ -354,7 +354,7 @@ function openTodoList() {
     winCont.style.display = "none";
 
     show(todolist, "block");
-    title.textContent = "Perfect! You are ready for the special day ♡";
+    title.textContent = "Let's see if you got everything for teh special day!";
 
     todolistItems.innerHTML = "";
     const length = TODOList.length;
@@ -386,7 +386,7 @@ function openTodoList() {
 
                 if(length == Achieved){
                     hide(todolistItems);
-                    title.textContent = "Wow you are so ready to be my date!";
+                    title.textContent = "Wow you are so ready to be my date! ♡";
                     show(todoWIN, "flex");
                 }
             } 
