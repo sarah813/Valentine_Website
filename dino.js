@@ -210,13 +210,14 @@ function startDinoGame(canvasId, options = {}) {
     function update(dt) {
         if (!running) return;
         // Increase difficulty slowly
-        speed += 0.002;
+        const dtScale = dt / 16.666;
+        speed += 0.002*dtScale;
 
         // Apply gravity
-        dino.vy += gravity;
-        dino.y += dino.vy;
+        dino.vy += gravity*dtScale;
+        dino.y += dino.vy*dtScale;
 
-        score += 1;
+        score += 1*dtScale;
         const displayScore = Math.floor(score / 10);
 
         /* Win condition */
@@ -248,7 +249,7 @@ function startDinoGame(canvasId, options = {}) {
         }
 
         // Spawn obstacles
-        spawnTimer += 1;
+        spawnTimer += 1*dtScale;
         if (spawnTimer >= spawnEvery) {
             spawnTimer = 0;
 
@@ -288,7 +289,7 @@ function startDinoGame(canvasId, options = {}) {
         }
 
         // Move obstacles
-        obstacles = obstacles.map((o) => ({ ...o, x: o.x - speed }));
+        obstacles = obstacles.map((o) => ({ ...o, x: o.x - speed*dtScale}));
 
         // Remove off screen obstacles
         obstacles = obstacles.filter((o) => o.x + o.w > -10);
